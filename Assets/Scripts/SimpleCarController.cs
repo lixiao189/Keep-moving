@@ -20,19 +20,16 @@ public class SimpleCarController : MonoBehaviour
         if (other.transform.tag == "Floor")
         {
             isGrounded = true;
-            // Debug.Log("Grounded");
         }
         else
         {
             isGrounded = false;
-            // Debug.Log("Not Grounded");
         }
     }
 
 
     void Start()
     {
-
 
     }
 
@@ -68,10 +65,7 @@ public class SimpleCarController : MonoBehaviour
             horizontal = 0;
         }
 
-        Debug.Log(isGrounded);
-
         transform.Translate(0, 0, Time.deltaTime * carSpeed);
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
-
     }
 }
