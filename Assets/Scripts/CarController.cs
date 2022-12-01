@@ -43,6 +43,10 @@ public class CarController : MonoBehaviour
         {
             vertical = 0;
         }
+
+        // Add gravity
+        float mass = GetComponent<Rigidbody>().mass;
+        GetComponent<Rigidbody>().AddForce(Vector3.down * mass);
     }
 
     void FixedUpdate()
