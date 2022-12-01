@@ -1,77 +1,70 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
-[System.Serializable]
-public class AxleInfo
-{
-    public GameObject visualLeftWheel;
-    public GameObject visualRightWheel;
-
-    public WheelCollider leftWheel;
-    public WheelCollider rightWheel;
-    public bool motor;
-    public bool steering;
-}
+using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    public List<AxleInfo> axleInfos;
-    public float maxAcceleration;
-    public float brakeAcceleration;
+    public float maxSpeed = 20f;
 
-    public float maxSteeringAngle;
-    public float turnSensitivity;
+    private float accleration = 20f;
+    private float decceleration = 15f;
+    private float carSpeed = 0;
 
-    private Rigidbody rigidBody;
-    public Vector3 centerOfMass;
+    private float horizontal;
+    private float vertical;
 
-    private float motor;
-    private float steering;
+    private bool isGrounded = false;
 
-
-    // 查找相应的可视车轮
-    // 正确应用变换
-    public void ApplyLocalPositionToVisuals(Transform visualWheel, WheelCollider collider)
+    void OnTriggerStay(Collider other)
     {
-        Vector3 position;
-        Quaternion rotation;
-        collider.GetWorldPose(out position, out rotation);
-
-        visualWheel.transform.position = position;
-        visualWheel.transform.rotation = rotation;
-    }
-
-    public void Start()
-    {
-        rigidBody = GetComponent<Rigidbody>();
-        rigidBody.centerOfMass = centerOfMass;
-    }
-
-    public void Update()
-    {
-        motor = Input.GetAxis("Vertical");
-        steering = Input.GetAxis("Horizontal");
-    }
-
-    public void LateUpdate()
-    {
-        foreach (AxleInfo axleInfo in axleInfos)
+        if (other.transform.tag == "Floor")
         {
-            if (axleInfo.steering)
-            {
-                var steerAngle = steering * maxSteeringAngle * turnSensitivity;
-                axleInfo.leftWheel.steerAngle = Mathf.Lerp(axleInfo.leftWheel.steerAngle, steerAngle, 0.6f); ;
-                axleInfo.rightWheel.steerAngle = Mathf.Lerp(axleInfo.rightWheel.steerAngle, steerAngle, 0.6f); ;
-            }
-            if (axleInfo.motor)
-            {
-                // 车辆移动
-                axleInfo.leftWheel.motorTorque = maxAcceleration * Time.deltaTime * motor * 600;
-                axleInfo.rightWheel.motorTorque = maxAcceleration * Time.deltaTime * motor * 600;
-            }
-            ApplyLocalPositionToVisuals(axleInfo.visualLeftWheel.transform, axleInfo.leftWheel);
-            ApplyLocalPositionToVisuals(axleInfo.visualRightWheel.transform, axleInfo.rightWheel);
+            isGrounded = true;
         }
+        else
+        {
+            isGrounded = false;
+        }
+    }
+
+
+    void Start()
+    {
+
+    }
+
+    void Update()
+    {
+        // Car movement
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
+
+        if (!isGrounded)
+        {
+            vertical = 0;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (vertical > 0)
+        {
+            if (carSpeed + accleration * Time.deltaTime <= maxSpeed)
+            {
+                carSpeed += accleration * Time.deltaTime;
+            }
+        }
+        else if (carSpeed > 0)
+        {
+            carSpeed -= decceleration * Time.deltaTime;
+        }
+
+        if (carSpeed <= 0)
+        {
+            horizontal = 0;
+        }
+
+        transform.Translate(0, 0, Time.deltaTime * carSpeed);
+        transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
     }
 }
