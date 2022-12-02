@@ -14,6 +14,8 @@ public class CarController : MonoBehaviour
     private float vertical;
 
     private bool isGrounded = false;
+    private Vector3 startPos;
+    public Quaternion startRotate;
 
     void OnTriggerStay(Collider other)
     {
@@ -30,11 +32,20 @@ public class CarController : MonoBehaviour
 
     void Start()
     {
-
+        startPos = transform.position;
+        startRotate = transform.rotation;
     }
 
     void Update()
     {
+        if (Input.GetKey(KeyCode.R))
+        {
+            transform.position = startPos;
+            transform.rotation = startRotate;
+            carSpeed = 0;
+            return;
+        }
+
         // Car movement
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
@@ -44,13 +55,14 @@ public class CarController : MonoBehaviour
             vertical = 0;
         }
 
-        // Add gravity
-        float mass = GetComponent<Rigidbody>().mass;
-        GetComponent<Rigidbody>().AddForce(Vector3.down * mass);
     }
 
     void FixedUpdate()
     {
+        // Add gravity
+        float mass = GetComponent<Rigidbody>().mass;
+        GetComponent<Rigidbody>().AddForce(Vector3.down * mass);
+
         if (vertical > 0)
         {
             if (carSpeed + accleration * Time.deltaTime <= maxSpeed)
@@ -67,7 +79,6 @@ public class CarController : MonoBehaviour
         {
             horizontal = 0;
         }
-
         transform.Translate(0, 0, Time.deltaTime * carSpeed);
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
     }
