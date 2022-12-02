@@ -63,6 +63,11 @@ public class CarController : MonoBehaviour
             vertical = 0;
         }
 
+        // 四个车轮绕 X 轴旋转
+        transform.GetChild(1).Rotate(carSpeed * 100, 0, 0);
+        transform.GetChild(2).Rotate(carSpeed * 100, 0, 0);
+        transform.GetChild(3).Rotate(carSpeed * 100, 0, 0);
+        transform.GetChild(4).Rotate(carSpeed * 100, 0, 0);
     }
 
     void FixedUpdate()
@@ -89,6 +94,7 @@ public class CarController : MonoBehaviour
         if (carSpeed <= 0)
         {
             horizontal = 0;
+            carSpeed = 0;
         }
         transform.Translate(0, 0, Time.deltaTime * carSpeed);
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
