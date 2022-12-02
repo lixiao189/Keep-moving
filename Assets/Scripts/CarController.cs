@@ -29,6 +29,14 @@ public class CarController : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.tag == "Obstacle")
+        {
+            carSpeed = -0.6f * carSpeed;
+        }
+    }
+
 
     void Start()
     {
