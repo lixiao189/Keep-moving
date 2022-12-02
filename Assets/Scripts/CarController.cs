@@ -71,6 +71,9 @@ public class CarController : MonoBehaviour
         float mass = GetComponent<Rigidbody>().mass;
         GetComponent<Rigidbody>().AddForce(Vector3.down * mass);
 
+        // Cannot turn around around X axis
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
+
         if (vertical > 0)
         {
             if (carSpeed + accleration * Time.deltaTime <= maxSpeed)
