@@ -26,7 +26,6 @@ public class CarController : MonoBehaviour
         }
     }
 
-    // 不接触的时候
     void OnTriggerExit(Collider other)
     {
         if (other.transform.tag == "Floor")
@@ -66,7 +65,7 @@ public class CarController : MonoBehaviour
             vertical = 0;
         }
 
-        // 四个车轮绕 X 轴旋转
+        // Four wheel turn aournd the x axis
         transform.GetChild(1).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(2).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(3).Rotate(carSpeed * 100, 0, 0);
