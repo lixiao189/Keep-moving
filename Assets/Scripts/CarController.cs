@@ -24,7 +24,12 @@ public class CarController : MonoBehaviour
         {
             isGrounded = true;
         }
-        else
+    }
+
+    // 不接触的时候
+    void OnTriggerExit(Collider other)
+    {
+        if (other.transform.tag == "Floor")
         {
             isGrounded = false;
         }
@@ -93,7 +98,9 @@ public class CarController : MonoBehaviour
         {
             carSpeed = 0;
         }
+
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
+        Debug.Log(isGrounded); // debug 
         if (isGrounded)
         {
             carRigidbody.velocity = transform.forward * carSpeed;
