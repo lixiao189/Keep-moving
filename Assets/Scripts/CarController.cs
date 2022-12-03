@@ -13,9 +13,10 @@ public class CarController : MonoBehaviour
     private float horizontal;
     private float vertical;
 
+    private Rigidbody carRigidbody;
     private bool isGrounded = false;
     private Vector3 startPos;
-    public Quaternion startRotate;
+    private Quaternion startRotate;
 
     void OnTriggerStay(Collider other)
     {
@@ -29,19 +30,11 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.tag == "Obstacle")
-        {
-            carSpeed = -0.6f * carSpeed;
-        }
-    }
-
-
     void Start()
     {
         startPos = transform.position;
         startRotate = transform.rotation;
+        carRigidbody = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -50,7 +43,12 @@ public class CarController : MonoBehaviour
         {
             transform.position = startPos;
             transform.rotation = startRotate;
+
+            carRigidbody.velocity = Vector3.zero;
             carSpeed = 0;
+
+            isGrounded = false;
+
             return;
         }
 
@@ -76,8 +74,8 @@ public class CarController : MonoBehaviour
         float mass = GetComponent<Rigidbody>().mass;
         GetComponent<Rigidbody>().AddForce(Vector3.down * mass);
 
-        // Cannot turn around around X axis
-        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, transform.eulerAngles.z);
+        // Cannot turn around around X and Z axis
+        transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
         if (vertical > 0)
         {
@@ -93,10 +91,12 @@ public class CarController : MonoBehaviour
 
         if (carSpeed <= 0)
         {
-            horizontal = 0;
             carSpeed = 0;
         }
-        transform.Translate(0, 0, Time.deltaTime * carSpeed);
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
+        if (isGrounded)
+        {
+            carRigidbody.velocity = transform.forward * carSpeed;
+        }
     }
 }
