@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
+using TMPro;
 
 public class CarController : MonoBehaviour
 {
@@ -28,6 +31,9 @@ public class CarController : MonoBehaviour
     private bool isEnded = false;
     private int gameTimes = 3;
 
+    // Re-Spawn Prompt
+    public TextMeshProUGUI reSpawnPrompt;
+    
     void OnTriggerStay(Collider other)
     {
         if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
@@ -61,6 +67,8 @@ public class CarController : MonoBehaviour
         startPos = transform.position;
         startRotate = transform.rotation;
         carRigidbody = GetComponent<Rigidbody>();
+
+        reSpawnPrompt.alpha = 0;
     }
 
     void Update()
@@ -85,6 +93,8 @@ public class CarController : MonoBehaviour
             Destroy(stopSign);
 
             gameTimes--;
+
+            reSpawnPrompt.alpha = 0;
 
             return;
         }
@@ -146,6 +156,7 @@ public class CarController : MonoBehaviour
                 if (!isSuccessful) // Game failed
                 {
                     Debug.Log("Failed!");
+                    reSpawnPrompt.alpha = 1;
                 }
             }
         }

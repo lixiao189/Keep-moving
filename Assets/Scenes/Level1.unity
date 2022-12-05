@@ -12880,6 +12880,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4323544384602327847, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: reSpawnPrompt
+      value: 
+      objectReference: {fileID: 887646910}
+    - target: {fileID: 4323544384602327847, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
       propertyPath: stopSignPrefeb
       value: 
       objectReference: {fileID: 5977383549213536416, guid: 92d900d164c4445859b5576e10c53ea0, type: 3}
