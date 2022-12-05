@@ -6,6 +6,10 @@ public class CarController : MonoBehaviour
 {
     public float maxSpeed = 20f;
 
+    // Stop sign
+    public GameObject stopSignPrefeb;
+    private GameObject stopSign;
+
     private float accleration = 20f;
     private float decceleration = 15f;
     private float carSpeed = 0;
@@ -18,17 +22,29 @@ public class CarController : MonoBehaviour
     private Vector3 startPos;
     private Quaternion startRotate;
 
+    // Game state
+    private bool isStarted = false;
+    private bool isSuccessful = false;
+    private bool isEnded = false;
+
     void OnTriggerStay(Collider other)
     {
-        if (other.transform.tag == "Floor")
+        if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
         {
             isGrounded = true;
+        }
+
+        if (other.transform.tag == "Destination" && carSpeed <= 0)
+        {
+            Debug.Log("Success!");
+            isEnded = true;
+            isSuccessful = true;
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.transform.tag == "Floor")
+        if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
         {
             isGrounded = false;
         }
@@ -43,7 +59,7 @@ public class CarController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R)) // Reset 
         {
             transform.position = startPos;
             transform.rotation = startRotate;
@@ -52,6 +68,14 @@ public class CarController : MonoBehaviour
             carSpeed = 0;
 
             isGrounded = false;
+
+            // Reset game state
+            isStarted = false;
+            isSuccessful = false;
+            isEnded = false;
+
+            // Destory stop sign
+            Destroy(stopSign);
 
             return;
         }
@@ -83,6 +107,8 @@ public class CarController : MonoBehaviour
 
         if (vertical > 0)
         {
+            isStarted = true; // Game started
+
             if (carSpeed + accleration * Time.deltaTime <= maxSpeed)
             {
                 carSpeed += accleration * Time.deltaTime;
@@ -90,16 +116,33 @@ public class CarController : MonoBehaviour
         }
         else if (carSpeed > 0)
         {
-            carSpeed -= decceleration * Time.deltaTime;
+            carSpeed -= decceleration * Time.deltaTime; // Deccelerate
+
+            // Add drag force
+            if (vertical < 0)
+            {
+                carSpeed -= 2 * decceleration * Time.deltaTime;
+            }
         }
 
         if (carSpeed <= 0)
         {
             carSpeed = 0;
+
+            if (isStarted && !isEnded) // Game over
+            {
+                stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
+                isEnded = true;
+
+                if (!isSuccessful) // Game failed
+                {
+                    Debug.Log("Failed!");
+                }
+            }
         }
 
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
-        Debug.Log(isGrounded); // debug 
+
         if (isGrounded)
         {
             carRigidbody.velocity = transform.forward * carSpeed;
