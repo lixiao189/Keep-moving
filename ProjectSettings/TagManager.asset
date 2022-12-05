@@ -8,6 +8,7 @@ TagManager:
   - Obstacle
   - Wheel
   - Destination
+  - Water
   layers:
   - Default
   - TransparentFX

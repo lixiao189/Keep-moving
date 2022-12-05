@@ -26,6 +26,7 @@ public class CarController : MonoBehaviour
     private bool isStarted = false;
     private bool isSuccessful = false;
     private bool isEnded = false;
+    private int gameTimes = 3;
 
     void OnTriggerStay(Collider other)
     {
@@ -44,7 +45,12 @@ public class CarController : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
+        isGrounded = false;
+    }
+
+    void OnCollisionStay(Collision other)
+    {
+        if (other.transform.tag == "Water")
         {
             isGrounded = false;
         }
@@ -59,7 +65,8 @@ public class CarController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.R)) // Reset 
+        Debug.Log(gameTimes); // debug
+        if (Input.GetKeyDown(KeyCode.R) && gameTimes > 0) // Reset 
         {
             transform.position = startPos;
             transform.rotation = startRotate;
@@ -76,6 +83,8 @@ public class CarController : MonoBehaviour
 
             // Destory stop sign
             Destroy(stopSign);
+
+            gameTimes--;
 
             return;
         }
