@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_AmbientSkyColor: {r: 0.8549928, g: 0.79129815, b: 0.5840786, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -7775,12 +7775,48 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4323544384602327847, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: smokePrefeb
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4323544384602327847, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
       propertyPath: stopSignPrefeb
       value: 
       objectReference: {fileID: 5977383549213536416, guid: 92d900d164c4445859b5576e10c53ea0, type: 3}
     - target: {fileID: 5724170326482174945, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
       propertyPath: m_TagString
       value: Wheel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851428504726, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: simulationSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851428504726, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: TrailModule.mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851428504726, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851428504726, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: TrailModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851428504726, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: EmissionModule.rateOverDistance.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851430256006, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851448002148, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 7405096851448002148, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.83
       objectReference: {fileID: 0}
     - target: {fileID: 7806271102054093042, guid: 8563366b991cb4b9fa4813fab96fde4b, type: 3}
       propertyPath: m_TagString
