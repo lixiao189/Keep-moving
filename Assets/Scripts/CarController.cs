@@ -93,7 +93,7 @@ public class CarController : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
-        if (!isGrounded)
+        if (!isGrounded || isEnded)
         {
             vertical = 0;
         }
