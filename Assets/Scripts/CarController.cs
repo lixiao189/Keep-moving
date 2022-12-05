@@ -138,7 +138,7 @@ public class CarController : MonoBehaviour
         {
             carSpeed = 0;
 
-            if (isStarted && !isEnded) // Game over
+            if (isStarted && !isEnded && isGrounded) // Game over
             {
                 stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
                 isEnded = true;
