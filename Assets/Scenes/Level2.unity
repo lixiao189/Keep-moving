@@ -8646,7 +8646,7 @@ PrefabInstance:
       objectReference: {fileID: 182182958}
     - target: {fileID: 6032525104320379291, guid: 589282bfc31eb4db889f3c05b44d21f6, type: 3}
       propertyPath: timeRemaining
-      value: 2
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 6032525104320379291, guid: 589282bfc31eb4db889f3c05b44d21f6, type: 3}
       propertyPath: parkAreas.Array.data[0]
