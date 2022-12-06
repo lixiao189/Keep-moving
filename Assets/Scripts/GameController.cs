@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     public Text scoreLabel;
     public Text timeLabel;
     public Text promptLabel;
+    public GameObject promptPanel;
     public Text resultLabel;
     public LeanButton menuButton;
     public LeanButton replayButton;
@@ -48,12 +49,14 @@ public class GameController : MonoBehaviour
         state = GameState.Started;
         promptLabel.text = "Press R to Respawn";
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
     }
 
     public void CarStartMove()
     {
         state = GameState.Started;
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
     }
     
     public void CarStopped()
@@ -61,6 +64,7 @@ public class GameController : MonoBehaviour
         state = GameState.CarStopped;
         promptLabel.text = "Press R to Respawn";
         promptLabel.gameObject.SetActive(true);
+        promptPanel.gameObject.SetActive(true);
     }
 
     public void CarParked()
@@ -81,6 +85,7 @@ public class GameController : MonoBehaviour
     {
         state = GameState.Won;
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
         resultLabel.text = "You Won!";
         resultLabel.gameObject.SetActive(true);
         menuButton.gameObject.SetActive(true);
@@ -97,6 +102,7 @@ public class GameController : MonoBehaviour
     {
         state = GameState.Lost;
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
         resultLabel.text = "Time's up, You Lost!";
         resultLabel.color = Color.red;
         resultLabel.gameObject.SetActive(true);
@@ -150,6 +156,7 @@ public class GameController : MonoBehaviour
         
         promptLabel.text = "Press W to Start";
         promptLabel.gameObject.SetActive(true);
+        promptPanel.gameObject.SetActive(true);
 
         particleSystems1.Stop();
         particleSystems2.Stop();
@@ -174,6 +181,7 @@ public class GameController : MonoBehaviour
             {
                 carController.ResetPosition();
                 promptLabel.gameObject.SetActive(false);
+                promptPanel.gameObject.SetActive(false);
                 state = GameState.BeforeMove;
             }
         }
