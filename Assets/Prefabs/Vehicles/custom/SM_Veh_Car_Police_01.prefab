@@ -760,7 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  speed: 200
+  speed: 100
   maxTick: 300
 --- !u!65 &4549261208555816009
 BoxCollider:
