@@ -30,8 +30,7 @@ public class NPCCarController : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        Debug.Log(other.transform.name + " " + other.transform.tag); // debug
-        if (other.transform.tag != "Floor" && other.transform.tag != "Destination")
+        if (other.transform.tag != "Floor" && other.transform.tag != "Destination" && other.transform.tag != "Player")
         {
             state = NPCCarState.End;
         }
