@@ -124,8 +124,6 @@ public class CarController : MonoBehaviour
         transform.GetChild(2).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(3).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(4).Rotate(carSpeed * 100, 0, 0);
-
-        Debug.Log(gameController.state);
     }
 
     void FixedUpdate()
