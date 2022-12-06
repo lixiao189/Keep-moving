@@ -31,19 +31,24 @@ public class CarController : MonoBehaviour
     
     void OnTriggerStay(Collider other)
     {
-        if (carSpeed <= 0)
+        if (carSpeed <= 0 && carSpeed >= -0.5)
         {
-            carSpeed = 0;
             if (other.transform.tag == "Destination")
             {
-                gameController.GameWon();
+                gameController.CarParked();
             }
             else if (isGrounded 
                 && gameController.state == GameController.GameState.Started
-                && gameController.state != GameController.GameState.CarStopped)
+                && gameController.state != GameController.GameState.CarStopped
+                && gameController.state != GameController.GameState.BeforeMove
+                && gameController.state != GameController.GameState.BeforeStart)
             {
                 stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
-                gameController.carStopped();
+                gameController.CarStopped();
+            }
+            else
+            {
+                gameController.isCarInParkArea = false;
             }
         }
         if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
@@ -62,6 +67,15 @@ public class CarController : MonoBehaviour
         if (other.transform.tag == "Water")
         {
             isGrounded = false;
+            gameController.CarStopped();
+        }
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if (other.transform.tag == "Obstacle")
+        {
+            carSpeed = -carSpeed;
         }
     }
 
@@ -75,11 +89,6 @@ public class CarController : MonoBehaviour
 
         isGrounded = false;
         Destroy(stopSign);
-    }
-
-    void checkPositon()
-    {
-
     }
 
     void Start()
@@ -96,9 +105,13 @@ public class CarController : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
-        if (gameController.state == GameController.GameState.BeforeStart && vertical > 0)
+        if (gameController.state == GameController.GameState.BeforeStart && vertical > 0 && isGrounded)
         {
             gameController.StartGame();
+        }
+        if (gameController.state == GameController.GameState.BeforeMove && vertical > 0 && isGrounded)
+        {
+            gameController.CarStartMove();
         }
 
         if (!isGrounded || gameController.state != GameController.GameState.Started)
