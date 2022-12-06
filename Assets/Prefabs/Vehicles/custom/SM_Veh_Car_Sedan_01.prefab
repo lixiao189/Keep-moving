@@ -731,7 +731,6 @@ GameObject:
   - component: {fileID: 497832}
   - component: {fileID: 3387084}
   - component: {fileID: 2317488}
-  - component: {fileID: 64403533157552192}
   - component: {fileID: -1604063575966357298}
   - component: {fileID: -2187085657693618734}
   - component: {fileID: 6338086863451287740}
@@ -751,7 +750,7 @@ Transform:
   m_GameObject: {fileID: 198730}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 459374}
@@ -815,20 +814,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64403533157552192
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198730}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 2dfd189627cfe43479265db2e35e552c, type: 3}
 --- !u!54 &-1604063575966357298
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -858,7 +843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  speed: 10
+  speed: 200
   maxTick: 300
 --- !u!65 &6338086863451287740
 BoxCollider:
