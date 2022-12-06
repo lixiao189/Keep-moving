@@ -19,11 +19,8 @@ public class GameController : MonoBehaviour
     public GameObject panel;
 
     // Scene objects
-    public MeshRenderer parkAreaMeshRenderer;
     public Material whiteParkMaterial;
     public Material greenParkMaterial;
-    public ParticleSystem particleSystems1;
-    public ParticleSystem particleSystems2;
 
     public GameObject[] parkAreas;
     private ArrayList parkedArea = new ArrayList();
@@ -84,6 +81,7 @@ public class GameController : MonoBehaviour
 
     public void CarParked(Collider area)
     {
+        Debug.Log(area.name);
         if (CheckParked(area.name))
         {
             return;
@@ -94,9 +92,32 @@ public class GameController : MonoBehaviour
             isCarInParkArea = true;
             parkTimes++;
             scoreLabel.text = "Parked: " + parkTimes + "/" + totalParkTimes;
+            area.GetComponent<MeshRenderer>().material = greenParkMaterial;
+            ChangeParticleSystemState(area.gameObject, true);
             if (parkTimes == totalParkTimes)
             {
                 GameWon();
+                Debug.Log("Game Won");
+            }
+        }
+    }
+
+    void ChangeParticleSystemState(GameObject area, bool isPlay)
+    {
+        if (isPlay)
+        {
+            var particleSystems = area.GetComponentsInChildren<ParticleSystem>();
+            foreach (var ps in particleSystems)
+            {
+                ps.Play();
+            }
+        }
+        else
+        {
+            var particleSystems = area.GetComponentsInChildren<ParticleSystem>();
+            foreach (var ps in particleSystems)
+            {
+                ps.Stop();
             }
         }
     }
@@ -111,11 +132,6 @@ public class GameController : MonoBehaviour
         menuButton.gameObject.SetActive(true);
         replayButton.gameObject.SetActive(true);
         panel.SetActive(true);
-
-        particleSystems1.Play();
-        particleSystems2.Play();
-
-        parkAreaMeshRenderer.material = greenParkMaterial;
     }
 
     public void GameLost()
@@ -152,8 +168,6 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-
-
         carController = GameObject.Find("Tank").GetComponent<CarController>();
 
         Debug.Log("GameController Start");
@@ -182,10 +196,10 @@ public class GameController : MonoBehaviour
         promptLabel.gameObject.SetActive(true);
         promptPanel.gameObject.SetActive(true);
 
-        particleSystems1.Stop();
-        particleSystems2.Stop();
-
-        Debug.Log("233");
+        foreach (var area in parkAreas)
+        {
+            ChangeParticleSystemState(area, false);
+        }
     }
 
     void Update()
@@ -215,14 +229,21 @@ public class GameController : MonoBehaviour
         shakeTime += Time.deltaTime;
         if (!(state == GameState.Won || state == GameState.Lost))
         {
-            if (shakeTime % 1 > 0.8f)
+            foreach (var area in parkAreas)
             {
-                parkAreaMeshRenderer.material = whiteParkMaterial;
+                if (!CheckParked(area.name))
+                {
+                    if (shakeTime % 1 > 0.8f)
+                    {
+                        area.GetComponent<MeshRenderer>().material = whiteParkMaterial;
+                    }
+                    else
+                    {
+                        area.GetComponent<MeshRenderer>().material = greenParkMaterial;
+                    }
+                }
             }
-            else
-            {
-                parkAreaMeshRenderer.material = greenParkMaterial;
-            }
+            
         }
     }
 }
