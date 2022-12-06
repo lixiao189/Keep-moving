@@ -29,6 +29,9 @@ public class CarController : MonoBehaviour
 
     private GameController gameController;
 
+    public bool isStopping = false;
+    public float carStopTimeRemaining = 3f;
+
     void OnTriggerStay(Collider other)
     {
         if (carSpeed <= 0 && carSpeed >= -1)
@@ -43,12 +46,8 @@ public class CarController : MonoBehaviour
                 && gameController.state != GameController.GameState.BeforeMove
                 && gameController.state != GameController.GameState.BeforeStart)
             {
-                stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
-                gameController.CarStopped();
-            }
-            else
-            {
-                gameController.isCarInParkArea = false;
+                isStopping = true;
+                gameController.CarStopping(carStopTimeRemaining);
             }
         }
         if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
@@ -57,9 +56,26 @@ public class CarController : MonoBehaviour
         }
     }
 
+    void CarStopped()
+    {
+        stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
+        gameController.CarStopped();
+    }
+
+    void CarMoved()
+    {
+        isStopping = false;
+        carStopTimeRemaining = 3f;
+        gameController.CarStartMove();
+    }
+
     void OnTriggerExit(Collider other)
     {
         isGrounded = false;
+        if (other.transform.tag == "Destination")
+        {
+            gameController.isCarInParkArea = false;
+        }
     }
 
     void OnCollisionStay(Collision other)
@@ -91,6 +107,22 @@ public class CarController : MonoBehaviour
         Destroy(stopSign);
     }
 
+    void CountDownCarStopping()
+    {
+        if (carStopTimeRemaining > 0)
+        {
+            carStopTimeRemaining -= Time.deltaTime;
+            gameController.CarStopping(carStopTimeRemaining);
+        }
+        else
+        {
+            CarStopped();
+            isStopping = false;
+            carStopTimeRemaining = 3f;
+            gameController.CarStopped();
+        }
+    }
+
     void Start()
     {
         startPos = transform.position;
@@ -101,6 +133,8 @@ public class CarController : MonoBehaviour
 
     void Update()
     {
+        // Debug.Log(gameController.state);
+
         // Car movement
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
@@ -109,9 +143,11 @@ public class CarController : MonoBehaviour
         {
             gameController.StartGame();
         }
-        if (gameController.state == GameController.GameState.BeforeMove && vertical > 0 && isGrounded)
+        if ((gameController.state == GameController.GameState.Started
+        || gameController.state == GameController.GameState.BeforeMove)
+        && vertical > 0 && isGrounded)
         {
-            gameController.CarStartMove();
+            CarMoved();
         }
 
         if (!isGrounded || gameController.state != GameController.GameState.Started)
@@ -128,6 +164,11 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isStopping)
+        {
+            CountDownCarStopping();
+        }
+
         // Add gravity
         float mass = GetComponent<Rigidbody>().mass;
         GetComponent<Rigidbody>().AddForce(Vector3.down * mass);

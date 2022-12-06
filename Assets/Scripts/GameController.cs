@@ -57,14 +57,23 @@ public class GameController : MonoBehaviour
         state = GameState.Started;
         promptLabel.gameObject.SetActive(false);
         promptPanel.gameObject.SetActive(false);
+        
     }
 
     public void CarStopped()
     {
         state = GameState.CarStopped;
         promptLabel.text = "Press R to Respawn";
+        promptLabel.color = Color.white;
         promptLabel.gameObject.SetActive(true);
         promptPanel.gameObject.SetActive(true);
+    }
+
+    public void CarStopping(float timeLeft)
+    {
+        promptLabel.text = string.Format("Tank Will Be Stopped in {0:0.0}", timeLeft);
+        promptLabel.color = Color.red;
+        promptLabel.gameObject.SetActive(true);
     }
 
     public bool CheckParked(string name)
@@ -84,6 +93,7 @@ public class GameController : MonoBehaviour
         Debug.Log(area.name);
         if (CheckParked(area.name))
         {
+            Debug.Log("return");
             return;
         }
         if (!isCarInParkArea)
