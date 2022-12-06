@@ -15,7 +15,7 @@ public class NPCCarController : MonoBehaviour
     private Rigidbody carRigidbody;
 
     public NPCCarState state = NPCCarState.Stop;
-    public float speed = 10f;
+    public float speed = 500f;
 
     public int maxTick = 200;
     private int tick = 0;
@@ -30,7 +30,7 @@ public class NPCCarController : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        Debug.Log("test " + other.transform.tag);
+        Debug.Log(other.transform.name + " " + other.transform.tag); // debug
         if (other.transform.tag != "Floor" && other.transform.tag != "Destination")
         {
             state = NPCCarState.End;
@@ -63,6 +63,7 @@ public class NPCCarController : MonoBehaviour
         {
             case NPCCarState.Move:
                 carRigidbody.velocity = transform.forward * speed;
+                Debug.Log(carRigidbody.velocity.magnitude);
                 break;
             case NPCCarState.End:
                 Destroy(gameObject);

@@ -11,7 +11,7 @@ public class NPCController : MonoBehaviour
     public int maxCarNum = 6;
 
     private int tick = 0;
-    private int period = 150;
+    public int period = 80;
 
     void FixedUpdate()
     {
