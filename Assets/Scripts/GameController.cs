@@ -12,24 +12,38 @@ public class GameController : MonoBehaviour
     public Text scoreLabel;
     public Text timeLabel;
     public Text promptLabel;
+    public GameObject promptPanel;
     public Text resultLabel;
     public LeanButton menuButton;
     public LeanButton replayButton;
     public GameObject panel;
+
+    // Scene objects
+    public MeshRenderer parkAreaMeshRenderer;
+    public Material whiteParkMaterial;
+    public Material greenParkMaterial;
+    public ParticleSystem particleSystems1;
+    public ParticleSystem particleSystems2;
+
+    public GameObject[] parkAreas;
+    private ArrayList parkedArea = new ArrayList();
 
     private CarController carController;
 
     // Game logic
     public int parkTimes = 0;
     public int totalParkTimes;
-
+    float shakeTime = 0f;
+    public float timeRemaining;
+    public bool isCarInParkArea = false;
     public GameState state = GameState.BeforeStart;
     public enum GameState
     {
         BeforeStart,
+        BeforeMove,
         Started,
         CarStopped,
-        Won, 
+        Won,
         Lost
     }
 
@@ -38,72 +52,177 @@ public class GameController : MonoBehaviour
         state = GameState.Started;
         promptLabel.text = "Press R to Respawn";
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
     }
-    
-    public void carStopped()
+
+    public void CarStartMove()
+    {
+        state = GameState.Started;
+        promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
+    }
+
+    public void CarStopped()
     {
         state = GameState.CarStopped;
         promptLabel.text = "Press R to Respawn";
         promptLabel.gameObject.SetActive(true);
+        promptPanel.gameObject.SetActive(true);
+    }
+
+    public bool CheckParked(string name)
+    {
+        for (int i = 0; i < parkedArea.Count; i++)
+        {
+            if (name == parkedArea[i].ToString())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void CarParked(Collider area)
+    {
+        if (CheckParked(area.name))
+        {
+            return;
+        }
+        if (!isCarInParkArea)
+        {
+            parkedArea.Add(area.name);
+            isCarInParkArea = true;
+            parkTimes++;
+            scoreLabel.text = "Parked: " + parkTimes + "/" + totalParkTimes;
+            if (parkTimes == totalParkTimes)
+            {
+                GameWon();
+            }
+        }
     }
 
     public void GameWon()
     {
         state = GameState.Won;
         promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
         resultLabel.text = "You Won!";
         resultLabel.gameObject.SetActive(true);
         menuButton.gameObject.SetActive(true);
         replayButton.gameObject.SetActive(true);
         panel.SetActive(true);
 
+        particleSystems1.Play();
+        particleSystems2.Play();
+
+        parkAreaMeshRenderer.material = greenParkMaterial;
     }
-    
+
+    public void GameLost()
+    {
+        state = GameState.Lost;
+        promptLabel.gameObject.SetActive(false);
+        promptPanel.gameObject.SetActive(false);
+        resultLabel.text = "Time's up, You Lost!";
+        resultLabel.color = Color.red;
+        resultLabel.gameObject.SetActive(true);
+        menuButton.gameObject.SetActive(true);
+        replayButton.gameObject.SetActive(true);
+        panel.SetActive(true);
+    }
+
+    void DisplayTime(float timeToDisplay)
+    {
+        // timeToDisplay += 1;
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        timeLabel.text = "Time Left: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+        if (timeToDisplay < 10)
+        {
+            if (seconds % 2 == 0)
+            {
+                timeLabel.color = Color.red;
+            }
+            else
+            {
+                timeLabel.color = Color.white;
+            }
+        }
+    }
+
     void Start()
     {
-        carController = GameObject.Find("TankFree_Red").GetComponent<CarController>();
+
+
+        carController = GameObject.Find("Tank").GetComponent<CarController>();
 
         Debug.Log("GameController Start");
 
-        menuButton.OnClick.AddListener(() => {
+        menuButton.OnClick.AddListener(() =>
+        {
             Debug.Log("MenuButton Clicked");
             SceneManager.LoadScene("MenuScene");
         });
-        replayButton.OnClick.AddListener(() => {
+        replayButton.OnClick.AddListener(() =>
+        {
             Debug.Log("ReplayButton Clicked");
             SceneManager.LoadScene("Level1");
         });
 
-        
+
         resultLabel.gameObject.SetActive(false);
         menuButton.gameObject.SetActive(false);
         replayButton.gameObject.SetActive(false);
         panel.SetActive(false);
 
-        scoreLabel.text = "TODO: 0/n Parked";
-        timeLabel.text = "TODO: 0:00";
-        
+        scoreLabel.text = "Parked: " + parkTimes + "/" + totalParkTimes;
+        DisplayTime(timeRemaining);
+
         promptLabel.text = "Press W to Start";
         promptLabel.gameObject.SetActive(true);
+        promptPanel.gameObject.SetActive(true);
+
+        particleSystems1.Stop();
+        particleSystems2.Stop();
+
+        Debug.Log("233");
     }
 
     void Update()
     {
+        if (timeRemaining > 0 && state != GameState.BeforeStart && state != GameState.Won && state != GameState.Lost)
+        {
+            timeRemaining -= Time.deltaTime;
+            DisplayTime(timeRemaining);
+        }
+        else if (timeRemaining <= 0)
+        {
+            timeLabel.text = "Time Left: 00:00";
+            GameLost();
+        }
+
         if (state == GameState.Started || state == GameState.CarStopped)
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
                 carController.ResetPosition();
                 promptLabel.gameObject.SetActive(false);
-                state = GameState.BeforeStart;
+                promptPanel.gameObject.SetActive(false);
+                state = GameState.BeforeMove;
             }
-        } else if (state == GameState.Lost)
+        }
+
+        shakeTime += Time.deltaTime;
+        if (!(state == GameState.Won || state == GameState.Lost))
         {
-            resultLabel.text = "You Lost!";
-            resultLabel.gameObject.SetActive(true);
-            menuButton.gameObject.SetActive(true);
-            replayButton.gameObject.SetActive(true);
-            panel.SetActive(true);
+            if (shakeTime % 1 > 0.8f)
+            {
+                parkAreaMeshRenderer.material = whiteParkMaterial;
+            }
+            else
+            {
+                parkAreaMeshRenderer.material = greenParkMaterial;
+            }
         }
     }
 }
