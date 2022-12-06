@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using TMPro;
+using Lean;
+using Lean.Gui;
+using UnityEngine.SceneManagement;
 
 public class CarController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class CarController : MonoBehaviour
     public GameObject stopSignPrefeb;
     private GameObject stopSign;
 
+    // Car control
     private float accleration = 20f;
     private float decceleration = 15f;
     private float carSpeed = 0;
@@ -24,28 +26,29 @@ public class CarController : MonoBehaviour
     private bool isGrounded = false;
     private Vector3 startPos;
     private Quaternion startRotate;
-
-    // Game state
-    private bool isStarted = false;
-    private bool isSuccessful = false;
-    private bool isEnded = false;
-    private int gameTimes = 3;
-
-    // Re-Spawn Prompt
-    public TextMeshProUGUI reSpawnPrompt;
+    
+    private GameController gameController;
     
     void OnTriggerStay(Collider other)
     {
+        if (carSpeed <= 0)
+        {
+            carSpeed = 0;
+            if (other.transform.tag == "Destination")
+            {
+                gameController.GameWon();
+            }
+            else if (isGrounded 
+                && gameController.state == GameController.GameState.Started
+                && gameController.state != GameController.GameState.CarStopped)
+            {
+                stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
+                gameController.carStopped();
+            }
+        }
         if (other.transform.tag == "Floor" || other.transform.tag == "Destination")
         {
             isGrounded = true;
-        }
-
-        if (other.transform.tag == "Destination" && carSpeed <= 0)
-        {
-            Debug.Log("Success!");
-            isEnded = true;
-            isSuccessful = true;
         }
     }
 
@@ -62,48 +65,43 @@ public class CarController : MonoBehaviour
         }
     }
 
+    public void ResetPosition()
+    {
+        transform.position = startPos;
+        transform.rotation = startRotate;
+
+        carRigidbody.velocity = Vector3.zero;
+        carSpeed = 0;
+
+        isGrounded = false;
+        Destroy(stopSign);
+    }
+
+    void checkPositon()
+    {
+
+    }
+
     void Start()
     {
         startPos = transform.position;
         startRotate = transform.rotation;
         carRigidbody = GetComponent<Rigidbody>();
-
-        reSpawnPrompt.alpha = 0;
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
     void Update()
     {
-        Debug.Log(gameTimes); // debug
-        if (Input.GetKeyDown(KeyCode.R) && gameTimes > 0) // Reset 
-        {
-            transform.position = startPos;
-            transform.rotation = startRotate;
-
-            carRigidbody.velocity = Vector3.zero;
-            carSpeed = 0;
-
-            isGrounded = false;
-
-            // Reset game state
-            isStarted = false;
-            isSuccessful = false;
-            isEnded = false;
-
-            // Destory stop sign
-            Destroy(stopSign);
-
-            gameTimes--;
-
-            reSpawnPrompt.alpha = 0;
-
-            return;
-        }
-
         // Car movement
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
-        if (!isGrounded || isEnded)
+        if (gameController.state == GameController.GameState.BeforeStart && vertical > 0)
+        {
+            gameController.StartGame();
+        }
+
+        if (!isGrounded || gameController.state != GameController.GameState.Started)
         {
             vertical = 0;
         }
@@ -113,6 +111,8 @@ public class CarController : MonoBehaviour
         transform.GetChild(2).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(3).Rotate(carSpeed * 100, 0, 0);
         transform.GetChild(4).Rotate(carSpeed * 100, 0, 0);
+
+        Debug.Log(gameController.state);
     }
 
     void FixedUpdate()
@@ -126,8 +126,6 @@ public class CarController : MonoBehaviour
 
         if (vertical > 0)
         {
-            isStarted = true; // Game started
-
             if (carSpeed + accleration * Time.deltaTime <= maxSpeed)
             {
                 carSpeed += accleration * Time.deltaTime;
@@ -144,25 +142,7 @@ public class CarController : MonoBehaviour
             }
         }
 
-        if (carSpeed <= 0)
-        {
-            carSpeed = 0;
-
-            if (isStarted && !isEnded && isGrounded) // Game over
-            {
-                stopSign = Instantiate(stopSignPrefeb, transform.position + transform.forward * 4, stopSignPrefeb.transform.rotation);
-                isEnded = true;
-
-                if (!isSuccessful) // Game failed
-                {
-                    Debug.Log("Failed!");
-                    reSpawnPrompt.alpha = 1;
-                }
-            }
-        }
-
         transform.Rotate(0, horizontal * Time.deltaTime * 150, 0);
-
         if (isGrounded)
         {
             carRigidbody.velocity = transform.forward * carSpeed;
