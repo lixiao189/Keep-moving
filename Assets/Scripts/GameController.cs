@@ -180,9 +180,8 @@ public class GameController : MonoBehaviour
         replayButton.OnClick.AddListener(() =>
         {
             Debug.Log("ReplayButton Clicked");
-            SceneManager.LoadScene("Level1");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         });
-
 
         resultLabel.gameObject.SetActive(false);
         menuButton.gameObject.SetActive(false);

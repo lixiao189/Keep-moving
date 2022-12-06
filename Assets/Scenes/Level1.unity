@@ -1402,7 +1402,7 @@ PrefabInstance:
       objectReference: {fileID: 905606508}
     - target: {fileID: 6032525104320379291, guid: 589282bfc31eb4db889f3c05b44d21f6, type: 3}
       propertyPath: timeRemaining
-      value: 45
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6032525104320379291, guid: 589282bfc31eb4db889f3c05b44d21f6, type: 3}
       propertyPath: totalParkTimes
