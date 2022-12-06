@@ -31,7 +31,7 @@ public class CarController : MonoBehaviour
     
     void OnTriggerStay(Collider other)
     {
-        if (carSpeed <= 0 && carSpeed >= -0.5)
+        if (carSpeed <= 0 && carSpeed >= -1)
         {
             if (other.transform.tag == "Destination")
             {
